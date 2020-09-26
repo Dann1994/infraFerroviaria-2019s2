@@ -1,0 +1,111 @@
+import formaciones.*
+import vagones.*
+import locomotoras.*
+
+test "primera formacion" {
+	
+	const vagonPasajeros1 = new VagonPasajeros(largo = 10, ancho = 4, estaOrdenado = true, tieneBanios = true)
+	const vagonPasajeros2 = new VagonPasajeros(largo = 7, ancho = 2, estaOrdenado = false, tieneBanios = false)
+	const vagonCarga1 = new VagonCarga(cargaMaximaIdeal = 6800, maderasSueltas = 5)
+	const vagonDormitorio1 = new VagonDormitorio(compartimientos = 8, camasPorComp = 3)
+	
+	const formacion1 = new Formacion(vagones = [vagonPasajeros1, vagonPasajeros2, vagonCarga1, vagonDormitorio1])
+	
+	assert.equals(100, vagonPasajeros1.capacidad())
+	assert.equals(10300, vagonPasajeros1.pesoMax())
+	assert.equals(300, vagonPasajeros1.cargaMax())
+	assert.equals(true, vagonPasajeros1.tienenBanios())
+	
+	assert.equals(41, vagonPasajeros2.capacidad())
+	assert.equals(6080, vagonPasajeros2.pesoMax())
+	assert.equals(800, vagonPasajeros2.cargaMax())
+	assert.equals(false, vagonPasajeros2.tienenBanios())
+	
+	assert.equals(0, vagonCarga1.capacidad())
+	assert.equals(6300, vagonCarga1.pesoMax())
+	assert.equals(4800, vagonCarga1.cargaMax())
+	assert.equals(false, vagonCarga1.tienenBanios())
+	
+	assert.equals(24, vagonDormitorio1.capacidad())
+	assert.equals(7120, vagonDormitorio1.pesoMax())
+	assert.equals(1200, vagonDormitorio1.cargaMax())
+	assert.equals(true, vagonDormitorio1.tienenBanios())
+	
+	assert.equals(165, formacion1.capacidad())
+	assert.equals(1, formacion1.vagonespapulares())
+	assert.equals(false, formacion1.esCarguera())
+	assert.equals(4220, formacion1.dispersionPesos())
+	assert.equals(2, formacion1.cantBanios())
+	
+	formacion1.hacerMantenimiento()
+	
+	assert.equals(180, formacion1.capacidad())
+	assert.equals(2, formacion1.vagonespapulares())
+	assert.equals(false, formacion1.esCarguera())
+	assert.equals(3200, formacion1.dispersionPesos())
+	assert.equals(2, formacion1.cantBanios())
+
+}
+
+test "segunda formacion" {
+	const vagonCarga1 = new VagonCarga(cargaMaximaIdeal = 8000, maderasSueltas = 1)
+	const vagonDormitorio1 = new VagonDormitorio(compartimientos = 15, camasPorComp = 4)
+	
+	const formacion1 = new Formacion(vagones = [vagonCarga1, vagonDormitorio1])
+	
+	assert.equals(60, formacion1.capacidad())
+	assert.equals(1, formacion1.vagonespapulares())
+	assert.equals(true, formacion1.esCarguera())
+	assert.equals(900, formacion1.dispersionPesos())
+	assert.equals(1, formacion1.cantBanios())
+	
+	formacion1.hacerMantenimiento()
+	
+	assert.equals(60, formacion1.capacidad())
+	assert.equals(1, formacion1.vagonespapulares())
+	assert.equals(true, formacion1.esCarguera())
+	assert.equals(500, formacion1.dispersionPesos())
+	assert.equals(1, formacion1.cantBanios())
+	
+	
+}
+
+test "tercera formacion" {
+	
+	const vagonPasajeros1 = new VagonPasajeros(largo = 10, ancho = 4, estaOrdenado = true, tieneBanios = true)
+	const vagonPasajeros2 = new VagonPasajeros(largo = 7, ancho = 2, estaOrdenado = false, tieneBanios = false)
+	const vagonCarga1 = new VagonCarga(cargaMaximaIdeal = 6800, maderasSueltas = 5)
+	const vagonDormitorio1 = new VagonDormitorio(compartimientos = 8, camasPorComp = 3)
+	
+	const locomotora1 = new Locomotora(peso = 3000, arrastre = 20000, velMax = 100)
+	const locomotora2 = new Locomotora(peso = 5000, arrastre = 22000, velMax = 200)
+	
+	const formacion1 = new Formacion(vagones = [vagonPasajeros1, vagonPasajeros2, vagonCarga1, vagonDormitorio1], locomotoras = [locomotora1])
+	
+	assert.equals(true, formacion1.esEficiente())
+	assert.equals(false, formacion1.puedeMoverse())
+	assert.equals(12800, formacion1.kilosDeEmpujeQueFaltan())
+	
+	formacion1.agragarLocomotora(locomotora2)
+	
+	assert.equals(false, formacion1.esEficiente())
+	assert.equals(true, formacion1.puedeMoverse())
+	assert.equals(0, formacion1.kilosDeEmpujeQueFaltan())
+}
+
+test "formacion ordenada" {
+
+	const vagon1 = new VagonPasajeros(largo = 5, ancho = 5, tieneBanios = true)
+	const vagon2 = new VagonPasajeros(largo = 5, ancho = 5, tieneBanios = true)
+	const vagon3 = new VagonCarga(cargaMaximaIdeal = 5, maderasSueltas = 5)
+	const vagon4 = new VagonCarga(cargaMaximaIdeal = 5, maderasSueltas = 5)
+	
+	const formacion = new Formacion(vagones = [vagon1, vagon2, vagon3, vagon4])
+	
+	assert.equals(true,formacion.estaOrganizada())
+	
+	const formacion2 = new Formacion(vagones = [vagon4, vagon2, vagon3, vagon1])
+	
+	assert.equals(false,formacion2.estaOrganizada())
+
+}
